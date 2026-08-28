@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Acao {
+public abstract class Acao {
     private String titulo;
     private String descricao;
     private LocalDateTime data;
@@ -39,4 +39,6 @@ public class Acao {
     public List<Voluntario> getVoluntariosInscritos() {
         return voluntariosInscritos;
     }
+
+    public abstract int calcularPontuacao();
 }
