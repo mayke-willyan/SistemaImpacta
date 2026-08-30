@@ -1,6 +1,7 @@
 package br.com.sistemaimpacta.model;
 
 import br.com.sistemaimpacta.exceptions.CalculoPontuacaoInvalidoException;
+import br.com.sistemaimpacta.exceptions.QuantidadeHorasInvalidasException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,8 +11,16 @@ public class AcaoOficinaEcologica extends Acao{
     private boolean kitMaterialEducativo;
 
     public AcaoOficinaEcologica(String titulo, String descricao, LocalDateTime data, int maximoParticipantes,int qtdHoras, boolean kitMaterialEducativo) {
+
         super(titulo, descricao, data, maximoParticipantes);
-        this.qtdHoras = qtdHoras;
+
+        if(qtdHoras <=0){
+            throw new QuantidadeHorasInvalidasException("Quantidade de horas não pode ser <=0");
+        }
+        else{
+            this.qtdHoras = qtdHoras;
+        }
+
         this.kitMaterialEducativo = kitMaterialEducativo;
     }
 

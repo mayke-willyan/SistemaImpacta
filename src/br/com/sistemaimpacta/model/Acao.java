@@ -1,5 +1,7 @@
 package br.com.sistemaimpacta.model;
 
+import br.com.sistemaimpacta.exceptions.QuantidadeMaximaParticipantesInvalidaException;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +15,16 @@ public abstract class Acao {
     private List<Voluntario>  voluntariosInscritos;
 
     public Acao(String titulo, String descricao, LocalDateTime data, int maximoParticipantes) {
+
+        if(maximoParticipantes <= 0){
+            throw new QuantidadeMaximaParticipantesInvalidaException("A quantidade maxima de participantes não pode ser <= 0");
+        }
+        else{
+            this.maximoParticipantes = maximoParticipantes;
+        }
         this.titulo = titulo;
         this.descricao = descricao;
         this.data = data;
-        this.maximoParticipantes = maximoParticipantes;
         this.voluntariosInscritos = new ArrayList<>();
 
     }
