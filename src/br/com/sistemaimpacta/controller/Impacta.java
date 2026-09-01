@@ -3,23 +3,27 @@ package br.com.sistemaimpacta.controller;
 import br.com.sistemaimpacta.exceptions.AcaoLotadaException;
 import br.com.sistemaimpacta.exceptions.CadastroEmailDuplicadoException;
 import br.com.sistemaimpacta.exceptions.DadosNaoEncontradosCadastroException;
+import br.com.sistemaimpacta.exceptions.VoluntarioJaInscritoException;
 import br.com.sistemaimpacta.model.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Impacta {
+
+    private int idAcao;
     private HashMap<String,Voluntario> voluntarios;
     private HashMap<Integer, Acao> acoes;
-    private int idAcao;
-
+    private HashMap<Integer, List<Voluntario>> inscricoesAcao;
 
     public Impacta() {
         this.voluntarios = new HashMap<>();
         this.acoes = new HashMap<>();
+        this.inscricoesAcao = new HashMap<>();
         this.idAcao = 1;
     }
-
 
     //Metodos Voluntarios
     public boolean cadastrarVoluntario(String nome, String email, String matricula){
@@ -46,7 +50,6 @@ public class Impacta {
         return "Voluntario não encontrado";
     }
 
-
     //Metodos Ações
 
     //Plantio
@@ -59,6 +62,7 @@ public class Impacta {
         AcaoPlantioMudas novaAcaoPlantio = new AcaoPlantioMudas(titulo,descricao,dataFormatada, maximoParticipantes, quantidadeMudas);
 
         acoes.put(idGeradoAcao,novaAcaoPlantio);
+        inscricoesAcao.put(idGeradoAcao, new ArrayList<>());
 
         this.idAcao ++;
 
@@ -74,6 +78,7 @@ public class Impacta {
         AcaoMultiraoReciclagem novaAcaoMultirao = new AcaoMultiraoReciclagem(titulo, descricao,dataFormatada,maximoParticipantes,duracaoHoras);
 
         acoes.put(idGeradoAcao,novaAcaoMultirao);
+        inscricoesAcao.put(idGeradoAcao, new ArrayList<>());
 
         this.idAcao ++;
 
@@ -88,6 +93,7 @@ public class Impacta {
         AcaoOficinaEcologica novaAcaoOficina = new AcaoOficinaEcologica(titulo, descricao,dataFormatada,maximoParticipantes,duracaoHoras, kitMaterial);
 
         acoes.put(idGeradoAcao,novaAcaoOficina);
+        inscricoesAcao.put(idGeradoAcao, new ArrayList<>());
 
         this.idAcao ++;
 
@@ -95,21 +101,27 @@ public class Impacta {
     }
 
     public boolean inscreverVoluntario(String emailVoluntario, int idAcao){
-        Acao acao = acoes.get(idAcao);
 
         if(!voluntarios.containsKey(emailVoluntario) || !acoes.containsKey(idAcao)){
             throw new DadosNaoEncontradosCadastroException("Os dados informados para cadastro não foram encontrados");
         }
 
-        if(acao.acaoLotada()){
-            throw new AcaoLotadaException("Ação esta lotada e não aceita mais inscrições de participantes");
+        Acao acao = acoes.get(idAcao);
+        Voluntario voluntario = voluntarios.get(emailVoluntario);
+
+        List<Voluntario> listaInscritos = inscricoesAcao.get(idAcao);
+
+        if(listaInscritos.contains(voluntario)){
+            throw new VoluntarioJaInscritoException("Voluntario ja inscrito");
         }
-        else{
-            return true;
+
+        if(listaInscritos.size() >= acao.getMaximoParticipantes()){
+            throw new AcaoLotadaException("Ação ja lotada");
         }
 
+        listaInscritos.add(voluntario);
 
-
+        return true;
     }
 
 }
