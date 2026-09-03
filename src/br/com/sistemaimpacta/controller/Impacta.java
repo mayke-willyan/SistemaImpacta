@@ -1,9 +1,6 @@
 package br.com.sistemaimpacta.controller;
 
-import br.com.sistemaimpacta.exceptions.AcaoLotadaException;
-import br.com.sistemaimpacta.exceptions.CadastroEmailDuplicadoException;
-import br.com.sistemaimpacta.exceptions.DadosNaoEncontradosCadastroException;
-import br.com.sistemaimpacta.exceptions.VoluntarioJaInscritoException;
+import br.com.sistemaimpacta.exceptions.*;
 import br.com.sistemaimpacta.model.*;
 
 import java.time.LocalDateTime;
@@ -25,7 +22,7 @@ public class Impacta {
         this.idAcao = 1;
     }
 
-    //Metodos Voluntarios
+
     public boolean cadastrarVoluntario(String nome, String email, String matricula){
 
         if(!voluntarios.containsKey(email)) {
@@ -47,7 +44,50 @@ public class Impacta {
             return String.format("Nome: %s | Ações: %d | Pontuação: %d", voluntario.getNome(), voluntario.getQuantidadeAcoes(), voluntario.getPontuacaoImpacto());
         }
 
-        return "Voluntario não encontrado";
+        throw new VoluntarioNaoEncontradoException("Voluntario não encontrado");
+    }
+
+    public String[] listarVoluntarios(){
+
+        List<Voluntario> voluntariosUnsorted = new ArrayList<>(voluntarios.values());
+
+        for (int i = 0; i < voluntariosUnsorted.size() - 1 ; i++) {
+            for (int j = 0; j < voluntariosUnsorted.size() ; j++) {
+
+                Voluntario voluntario1 = voluntariosUnsorted.get(j);
+                Voluntario voluntario2 = voluntariosUnsorted.get(j+1);
+
+                boolean precisaTrocar = false;
+
+                //comparação pontuação
+                if(voluntario1.getPontuacaoImpacto() < voluntario2.getPontuacaoImpacto()){
+                    precisaTrocar = true;
+                }
+
+                //desempate por nome
+                if(voluntario1.getPontuacaoImpacto() == voluntario2.getPontuacaoImpacto()){
+                    if(voluntario1.getNome().compareToIgnoreCase(voluntario2.getNome()) > 0){
+                        precisaTrocar = true;
+                    }
+                }
+
+                if(precisaTrocar){
+                    voluntariosUnsorted.set(j,voluntario2);
+                    voluntariosUnsorted.set(j+1,voluntario1);
+                }
+            }
+
+        }
+
+        //lista sorted 
+        String[] voluntariosSorted = new String[voluntariosUnsorted.size()];
+        for (int i = 0; i < voluntariosUnsorted.size(); i++) {
+            Voluntario v = voluntariosUnsorted.get(i);
+            voluntariosSorted[i] = String.format("Nome: %s | Email: %s | Ações: %d | Pontos: %d",
+                    v.getNome(), v.getEmail(), v.getQuantidadeAcoes(), v.getPontuacaoImpacto());
+        }
+
+        return voluntariosSorted;
     }
 
     //Metodos Ações
@@ -122,6 +162,22 @@ public class Impacta {
         listaInscritos.add(voluntario);
 
         return true;
+    }
+
+    public String exibirDetalhesAcao(int idAcao){
+
+        if(!acoes.containsKey(idAcao)){
+            throw new AcaoNaoEncontradaException("Ação com o id informado não foi encontrada");
+        }
+
+        Acao acao = acoes.get(idAcao);
+
+        String mensagem =  "Titulo: " + acao.getTitulo() + "\n"
+                          +"Descrição: " + acao.getDescricao() + "\n"
+                          +"Data: " + acao.getData() + "\n"
+                          +"Maximo Participantes: " + acao.getMaximoParticipantes();
+
+        return mensagem;
     }
 
 }
