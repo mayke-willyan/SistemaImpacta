@@ -52,7 +52,7 @@ public class Impacta {
         List<Voluntario> voluntariosUnsorted = new ArrayList<>(voluntarios.values());
 
         for (int i = 0; i < voluntariosUnsorted.size() - 1 ; i++) {
-            for (int j = 0; j < voluntariosUnsorted.size() ; j++) {
+            for (int j = 0; j < voluntariosUnsorted.size() - 1 - i ; j++) {
 
                 Voluntario voluntario1 = voluntariosUnsorted.get(j);
                 Voluntario voluntario2 = voluntariosUnsorted.get(j+1);
@@ -160,6 +160,7 @@ public class Impacta {
         }
 
         listaInscritos.add(voluntario);
+        voluntario.adicionarAcao(acao);
 
         return true;
     }
@@ -171,11 +172,27 @@ public class Impacta {
         }
 
         Acao acao = acoes.get(idAcao);
+        List<Voluntario> inscritos = inscricoesAcao.get(idAcao);
 
-        String mensagem =  "Titulo: " + acao.getTitulo() + "\n"
-                          +"Descrição: " + acao.getDescricao() + "\n"
-                          +"Data: " + acao.getData() + "\n"
-                          +"Maximo Participantes: " + acao.getMaximoParticipantes();
+        String mensagem = "Título: " + acao.getTitulo() + "\n"
+                + "Descrição: " + acao.getDescricao() + "\n"
+                + "Data: " + acao.getData() + "\n"
+                + "Máximo Participantes: " + acao.getMaximoParticipantes() + "\n"
+                + "Pontuação Calculada: " + acao.calcularPontuacao() + "\n"
+                + "Voluntários Inscritos:\n";
+
+        if(inscritos.isEmpty()){
+
+            mensagem += "- Nenhum voluntário inscrito.";
+
+        }
+        else{
+
+            for(Voluntario v : inscritos){
+                mensagem += " - " + v.getNome() + " (" + v.getEmail() + ")\n";
+            }
+
+        }
 
         return mensagem;
     }

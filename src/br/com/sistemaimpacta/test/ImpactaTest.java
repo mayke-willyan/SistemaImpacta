@@ -104,6 +104,17 @@ public class ImpactaTest {
     }
 
     @Test
+    @DisplayName("deve verificar se o voluntario não foi encontrado")
+    public void deveVerificarUsuarioNaoEncontrado(){
+
+        impacta.cadastrarVoluntario("Mayke","maykewillyan1@gmail.com","1");
+
+        assertThrows(VoluntarioNaoEncontradoException.class, () -> {
+            impacta.exibirVoluntario("maykewillyan2@gmail.com");
+        });
+    }
+
+    @Test
     @DisplayName("Deve verificar se a Ação esta lotada")
     public void deveVerificarAcaoLotada(){
 
@@ -156,16 +167,7 @@ public class ImpactaTest {
         });
     }
 
-    @Test
-    @DisplayName("deve verificar se o voluntario não foi encontrado")
-    public void deveVerificarUsuarioNaoEncontrado(){
 
-        impacta.cadastrarVoluntario("Mayke","maykewillyan1@gmail.com","1");
-
-        assertThrows(VoluntarioNaoEncontradoException.class, () -> {
-            impacta.exibirVoluntario("maykewillyan2@gmail.com");
-        });
-    }
 
 
 }

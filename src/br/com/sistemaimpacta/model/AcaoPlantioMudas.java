@@ -27,7 +27,7 @@ public class AcaoPlantioMudas extends Acao{
             throw new CalculoPontuacaoInvalidoException("Quantidade de mudas não pode ser menor ou igual a 0");
         }
         else{
-            return 5 + (this.qtdMudas);
+            return 5 + (this.qtdMudas * 2);
         }
 
     }

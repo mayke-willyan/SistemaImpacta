@@ -54,4 +54,9 @@ public class Voluntario {
     public void setPontuacaoImpacto(int pontuacaoImpacto) {
         this.pontuacaoImpacto = pontuacaoImpacto;
     }
+
+    public void adicionarAcao(Acao acao){
+        this.quantidadeAcoes ++;
+        this.pontuacaoImpacto = acao.calcularPontuacao();
+    }
 }
