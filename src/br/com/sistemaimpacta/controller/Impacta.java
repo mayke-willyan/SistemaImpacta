@@ -174,24 +174,34 @@ public class Impacta {
         Acao acao = acoes.get(idAcao);
         List<Voluntario> inscritos = inscricoesAcao.get(idAcao);
 
+        String especificos = "";
+        if (acao instanceof AcaoPlantioMudas) {
+            AcaoPlantioMudas plantio = (AcaoPlantioMudas) acao;
+            especificos = "Quantidade de Mudas: " + plantio.getQtdMudas() + "\n";
+        } else if (acao instanceof AcaoMultiraoReciclagem) {
+            AcaoMultiraoReciclagem multirao = (AcaoMultiraoReciclagem) acao;
+            especificos = "Duração em Horas: " + multirao.getQtdHoras() + "\n";
+        } else if (acao instanceof AcaoOficinaEcologica) {
+            AcaoOficinaEcologica oficina = (AcaoOficinaEcologica) acao;
+            especificos = "Duração em Horas: " + oficina.getQtdHoras() + "\n"
+                    + "Kit Material Educativo: " + (oficina.isKitMaterialEducativo() ? "Sim" : "Não") + "\n";
+        }
+
         String mensagem = "Título: " + acao.getTitulo() + "\n"
                 + "Descrição: " + acao.getDescricao() + "\n"
                 + "Data: " + acao.getData() + "\n"
                 + "Máximo Participantes: " + acao.getMaximoParticipantes() + "\n"
+                + especificos
                 + "Pontuação Calculada: " + acao.calcularPontuacao() + "\n"
                 + "Voluntários Inscritos:\n";
 
         if(inscritos.isEmpty()){
-
             mensagem += "- Nenhum voluntário inscrito.";
-
         }
         else{
-
             for(Voluntario v : inscritos){
                 mensagem += " - " + v.getNome() + " (" + v.getEmail() + ")\n";
             }
-
         }
 
         return mensagem;

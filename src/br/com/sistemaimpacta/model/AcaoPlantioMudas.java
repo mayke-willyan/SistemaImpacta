@@ -31,4 +31,8 @@ public class AcaoPlantioMudas extends Acao{
         }
 
     }
+
+    public int getQtdMudas() {
+        return qtdMudas;
+    }
 }

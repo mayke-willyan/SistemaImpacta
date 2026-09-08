@@ -41,4 +41,12 @@ public class AcaoOficinaEcologica extends Acao{
         }
 
     }
+
+    public int getQtdHoras() {
+        return qtdHoras;
+    }
+
+    public boolean isKitMaterialEducativo() {
+        return kitMaterialEducativo;
+    }
 }

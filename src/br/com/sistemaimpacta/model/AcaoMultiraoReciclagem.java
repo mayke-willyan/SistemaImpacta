@@ -32,4 +32,8 @@ public class AcaoMultiraoReciclagem extends Acao{
         }
 
     }
+
+    public int getQtdHoras() {
+        return qtdHoras;
+    }
 }
