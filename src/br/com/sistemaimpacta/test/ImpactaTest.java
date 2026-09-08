@@ -2,6 +2,10 @@ package br.com.sistemaimpacta.test;
 
 import br.com.sistemaimpacta.controller.Impacta;
 import br.com.sistemaimpacta.exceptions.*;
+import br.com.sistemaimpacta.model.Acao;
+import br.com.sistemaimpacta.model.AcaoMultiraoReciclagem;
+import br.com.sistemaimpacta.model.AcaoOficinaEcologica;
+import br.com.sistemaimpacta.model.AcaoPlantioMudas;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -198,5 +202,39 @@ public class ImpactaTest {
         assertTrue(ranking[2].contains("Carlos"));
         assertTrue(ranking[2].contains("Pontos: 8"));
 
+    }
+    @Test
+    @DisplayName("Deve validar obrigatoriamente o cálculo polimórfico de pontuação das 3 ações")
+    public void deveValidarCalculoPolimorficoPontuacao() {
+        // Plantio: 5 base + (2 * 10 mudas) = 25
+        Acao plantio = new AcaoPlantioMudas("Plantio", "Desc", java.time.LocalDateTime.now(), 10, 10);
+        assertEquals(25, plantio.calcularPontuacao());
+
+        // Mutirão: 4 * 5 horas = 20
+        Acao mutirao = new AcaoMultiraoReciclagem("Mutirão", "Desc", java.time.LocalDateTime.now(), 10, 5);
+        assertEquals(20, mutirao.calcularPontuacao());
+
+        // Oficina com Kit: (3 * 4 horas) + 10 = 22
+        Acao oficinaComKit = new AcaoOficinaEcologica("Oficina", "Desc", java.time.LocalDateTime.now(), 10, 4, true);
+        assertEquals(22, oficinaComKit.calcularPontuacao());
+
+        // Oficina sem Kit: 3 * 4 horas = 12
+        Acao oficinaSemKit = new AcaoOficinaEcologica("Oficina", "Desc", java.time.LocalDateTime.now(), 10, 4, false);
+        assertEquals(12, oficinaSemKit.calcularPontuacao());
+    }
+
+    @Test
+    @DisplayName("Deve acumular pontuação do voluntário ao se inscrever em múltiplas ações")
+    public void deveAcumularPontuacaoVoluntario() {
+        impacta.cadastrarVoluntario("Pedro", "pedro@email.com", "123");
+        int idPlantio = impacta.cadastrarPlantio("Plantio", "Desc", "2026-08-12T10:00:00", 10, 10); // 25 pts
+        int idMutirao = impacta.cadastrarMultirao("Mutirão", "Desc", "2026-08-12T10:00:00", 10, 2); // 8 pts
+
+        impacta.inscreverVoluntario("pedro@email.com", idPlantio);
+        impacta.inscreverVoluntario("pedro@email.com", idMutirao);
+
+        String dados = impacta.exibirVoluntario("pedro@email.com");
+        assertTrue(dados.contains("Pontuação: 33"));
+        assertTrue(dados.contains("Ações: 2"));
     }
 }
